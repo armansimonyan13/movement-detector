@@ -1,6 +1,6 @@
-int ms0 = 0;
-int ms1 = 1;
-int ms2 = 2;
+int ms0 = 10;
+int ms1 = 11;
+int ms2 = 12;
 int sw = 3;
 int ls = A2;
 bool isOn = false;
@@ -21,25 +21,27 @@ void setup() {
 }
 
 void loop() {
-  if (isOn) {
-    if (timer >= 0) {
-      int diffMillis = millis() - previousMillis;
-      timer -= diffMillis;
-    }
-    if (timer < 0) {
-      isOn = false;
-    }
+  int msValue0 = digitalRead(ms0);
+  int msValue1 = digitalRead(ms1);
+  int msValue2 = digitalRead(ms2);
+  if (msValue0 == HIGH || msValue1 == HIGH || msValue2 == HIGH) {
+    isOn = true;
+    timer = 10000;
+    previousMillis = millis();
   } else {
-    int msValue0 = digitalRead(ms0);
-    int msValue1 = digitalRead(ms1);
-    int msValue2 = digitalRead(ms2);
-    if (msValue0 == HIGH || msValue1 == HIGH || msValue2 == HIGH) {
-      isOn = true;
-      timer = 10000;
-      previousMillis = millis();
+    if (isOn) {
+      if (timer >= 0) {
+        unsigned long currentMillis = millis();
+        int diffMillis = currentMillis - previousMillis;
+        previousMillis = currentMillis;
+        timer -= diffMillis;
+      }
+      if (timer < 0) {
+        isOn = false;
+      }
     }
   }
-
+  
   digitalWrite(sw, isOn);
   print();
 }
